@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kids Music Practice – Beginner Keyboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --accent: #22c55e;
+      --accent-soft: #bbf7d0;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --danger: #f87171;
+      --warn: #facc15;
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app {
+      max-width: 1200px;
+      width: 100%;
+      padding: 16px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 12px;
+      background: rgba(148, 163, 184, 0.25);
+      color: var(--accent-soft);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      color: #022c22;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.98));
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .card h2 {
+      font-size: 0.9rem;
+      margin: 0 0 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card h3 {
+      font-size: 0.85rem;
+      margin: 0 0 4px;
+    }
+
+    .small {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .level-list {
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .level-item {
+      padding: 6px;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .level-item:hover {
+      background: rgba(30, 64, 175, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .level-item.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.4));
+      border: 1px solid rgba(34, 197, 94, 0.65);
+    }
+
+    .level-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .level-tag {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .pill.green {
+      border-color: rgba(34, 197, 94, 0.7);
+      color: var(--accent-soft);
+    }
+
+    .pill.amber {
+      border-color: rgba(245, 158, 11, 0.8);
+      color: #fed7aa;
+    }
+
+    .pill.gray {
+      color: var(--muted);
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
+    .main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .mode-btn {
+      font-size: 0.75rem;
+      padding: 4px 9px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+    }
+
+    .mode-btn.active {
+      background: rgba(15, 118, 110, 0.8);
+      color: #a7f3d0;
+    }
+
+    .staff {
+      position: relative;
+      height: 140px;
+      border-radius: 12px;
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .staff-lines {
+      position: absolute;
+      inset: 0 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      opacity: 0.8;
+    }
+
+    .staff-line {
+      height: 1px;
+      background: rgba(148, 163, 184, 0.75);
+    }
+
+    .staff-note {
+      position: absolute;
+      width: 20px;
+      height: 14px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      border: 2px solid #020617;
+      box-shadow: 0 0 10px rgba(248, 250, 252, 0.8);
+      transition: transform 0.25s ease-out;
+    }
+
+    .staff-note::after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 36px;
+      background: #e5e7eb;
+      right: -5px;
+      top: -32px;
+    }
+
+    .prompt {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+
+    .flashcard {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .flashcard-label {
+      font-size: 0.85rem;
+    }
+
+    .flashcard-btn {
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .flashcard-btn.correct {
+      background: rgba(22, 163, 74, 0.2);
+      color: #bbf7d0;
+      border-color: rgba(22, 163, 74, 0.8);
+    }
+
+    .flashcard-btn.wrong {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fecaca;
+      border-color: rgba(239, 68, 68, 0.9);
+    }
+
+    .keyboard {
+      position: relative;
+      display: flex;
+      height: 120px;
+      margin-top: 6px;
+      user-select: none;
+    }
+
+    .white-keys {
+      display: flex;
+      flex: 1;
+      background: #0b1120;
+      padding: 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .white-key {
+      flex: 1;
+      margin: 0 2px;
+      background: linear-gradient(to bottom, #f9fafb, #d1d5db);
+      border-radius: 0 0 6px 6px;
+      border: 1px solid #9ca3af;
+      position: relative;
+      cursor: pointer;
+      box-shadow: inset 0 -3px 5px rgba(148, 163, 184, 0.9);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #374151;
+    }
+
+    .white-key.active {
+      background: linear-gradient(to bottom, #e5e7eb, #9ca3af);
+      transform: translateY(2px);
+      box-shadow: inset 0 -1px 2px rgba(55, 65, 81, 0.8);
+    }
+
+    .white-key span {
+      margin-bottom: 4px;
+      opacity: 0.8;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .status-pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .status-pill.ok { color: #bbf7d0; border-color: rgba(34, 197, 94, 0.8); }
+    .status-pill.warn { color: #facc15; border-color: rgba(234, 179, 8, 0.9); }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .exam-summary {
+      font-size: 0.8rem;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .score {
+      font-weight: 700;
+      color: var(--accent-soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">
+        🎹 Kids Keyboard Lab
+        <span class="badge">Beginner • 30 hrs path</span>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="learn">Learn</button>
+        <button class="tab" data-tab="practice">Practice</button>
+        <button class="tab" data-tab="exam">Exam</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: Curriculum / Progress -->
+      <aside class="card">
+        <h2>
+          Levels
+          <span class="small" id="total-hours">0 / 30 hours</span>
+        </h2>
+        <p class="small">Tap a level to load content. Levels 1–15 cover basic notes, rhythm, and simple songs.</p>
+        <div class="level-list" id="level-list"></div>
+      </aside>
+
+      <!-- RIGHT: Main interaction panel -->
+      <section class="main-panel">
+        <div class="card">
+          <div class="exercise-header">
+            <div>
+              <h2>
+                <span id="panel-title">Level 1 • Note Names</span>
+              </h2>
+              <div class="small" id="panel-subtitle">
+                Read notes C–G on the staff and find them on the keyboard.
+              </div>
+            </div>
+            <div class="mode-switch">
+              <button class="mode-btn active" data-mode="note-to-key">Note ➜ Key</button>
+              <button class="mode-btn" data-mode="flashcard">Flashcards</button>
+            </div>
+          </div>
+
+          <!-- Staff + prompt -->
+          <div class="staff" id="staff">
+            <div class="staff-lines">
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+              <div class="staff-line"></div>
+            </div>
+            <div class="staff-note" id="staff-note"></div>
+          </div>
+
+          <div class="prompt" id="prompt-text">
+            Play this note on the keyboard. Use your MIDI keyboard or click the virtual keys below.
+          </div>
+
+          <!-- Flashcard-style MCQ for note letter -->
+          <div class="flashcard" id="flashcard-row">
+            <span class="flashcard-label">This note is:</span>
+            <div id="flashcard-options"></div>
+          </div>
+
+          <!-- Virtual keyboard -->
+          <div class="keyboard" id="keyboard">
+            <div class="white-keys" id="white-keys"></div>
+          </div>
+
+          <div class="status-bar">
+            <div class="row">
+              <span class="status-pill" id="midi-status">MIDI: not connected</span>
+              <span class="status-pill" id="mode-status">Mode: Learn</span>
+            </div>
+            <div class="row">
+              <span>Streak: <span id="streak">0</span></span>
+              <span>Accuracy: <span id="accuracy">100%</span></span>
+              <button class="btn btn-ghost" id="next-note-btn">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam section -->
+        <div class="card" id="exam-card">
+          <h2>
+            Exam Panel
+            <span class="small">Unlocks after Level 13 or 20+ hours</span>
+          </h2>
+          <div class="small">
+            Use this to run a simple theory + performance check. Theory uses flashcards; performance uses Note ➜ Key mode.
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <button class="btn btn-primary" id="start-theory-exam">Start theory exam</button>
+            <button class="btn btn-primary" id="start-performance-exam">Start performance exam</button>
+            <button class="btn btn-ghost" id="end-exam">End exam</button>
+          </div>
+          <div class="exam-summary" id="exam-summary">
+            No exam active. When you start an exam, the app will track score and show pass / merit / distinction.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ------------ CONFIG: curriculum + notes ---------------
+
+    const LEVELS = [
+      { id: 1, title: "Meet C–G", tag: "Notes + staff", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 2, title: "More C–G", tag: "Speed drill", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 3, title: "Rhythm basics", tag: "Quarter & half", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 4, title: "Full C-position", tag: "C–G fluency", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 5, title: "Songs in C–G", tag: "Melodies", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 6, title: "Add A, B", tag: "Range C–B", hours: 2, notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"] },
+      { id: 7, title: "Steps & skips", tag: "Patterns", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+      { id: 8, title: "Dynamics", tag: "Soft & loud", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 9, title: "Reading fluency", tag: "Speed", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+      { id: 10, title: "Pieces – Set 1", tag: "Songs", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4"] },
+      { id: 11, title: "Pieces – Set 2", tag: "Songs", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+      { id: 12, title: "Sight reading", tag: "Short bars", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+      { id: 13, title: "Mock exam 1", tag: "Review", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+      { id: 14, title: "Mock exam 2", tag: "Review", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+      { id: 15, title: "Final prep", tag: "Consolidate", hours: 2, notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4"] },
+    ];
+
+    const TOTAL_HOURS = LEVELS.reduce((sum, l) => sum + l.hours, 0);
+
+    // Basic MIDI pitch map for C4–C5 white keys
+    const NOTE_TO_MIDI = {
+      "C4": 60, "D4": 62, "E4": 64, "F4": 65, "G4": 67, "A4": 69, "B4": 71,
+      "C5": 72, "A3": 57, "B3": 59
+    };
+
+    const WHITE_NOTES = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
+
+    // Staff vertical positions (rough mapping)
+    const NOTE_TO_Y = {
+      "C4": 100,
+      "D4": 96,
+      "E4": 92,   // bottom line
+      "F4": 86,
+      "G4": 80,
+      "A4": 74,
+      "B4": 68,
+      "C5": 62,   // middle C above staff region for this simple mapping
+      "A3": 110,
+      "B3": 105
+    };
+
+    // ------------ STATE ---------------
+
+    let currentLevelId = 1;
+    let currentMode = "note-to-key"; // or "flashcard"
+    let currentNote = "C4";
+
+    let midiAccess = null;
+    let midiEnabled = false;
+
+    let streak = 0;
+    let totalAttempts = 0;
+    let totalCorrect = 0;
+
+    let examMode = null; // "theory" | "performance" | null
+    let examScore = 0;
+    let examQuestions = 0;
+
+    // ------------ DOM HELPERS ---------------
+
+    const qs = (sel) => document.querySelector(sel);
+    const qsa = (sel) => Array.from(document.querySelectorAll(sel));
+
+    const levelListEl = qs("#level-list");
+    const totalHoursEl = qs("#total-hours");
+    const staffNoteEl = qs("#staff-note");
+    const promptEl = qs("#prompt-text");
+    const flashcardRowEl = qs("#flashcard-row");
+    const flashcardOptionsEl = qs("#flashcard-options");
+    const whiteKeysEl = qs("#white-keys");
+    const streakEl = qs("#streak");
+    const accuracyEl = qs("#accuracy");
+    const midiStatusEl = qs("#midi-status");
+    const modeStatusEl = qs("#mode-status");
+    const nextNoteBtn = qs("#next-note-btn");
+    const examSummaryEl = qs("#exam-summary");
+
+    // ------------ INIT UI ---------------
+
+    function initLevels() {
+      totalHoursEl.textContent = `0 / ${TOTAL_HOURS} hours`;
+      LEVELS.forEach((lvl) => {
+        const div = document.createElement("div");
+        div.className = "level-item" + (lvl.id === currentLevelId ? " active" : "");
+        div.dataset.levelId = lvl.id;
+
+        div.innerHTML = `
+          <div>
+            <div class="level-title">Level ${lvl.id} • ${lvl.title}</div>
+            <div class="level-tag">${lvl.tag} • ~${lvl.hours} hours</div>
+          </div>
+          <span class="pill gray">Locked</span>
+        `;
+        if (lvl.id === 1) {
+          div.querySelector(".pill").textContent = "Active";
+          div.querySelector(".pill").className = "pill green";
+        }
+
+        div.addEventListener("click", () => {
+          currentLevelId = lvl.id;
+          qsa(".level-item").forEach((item) => item.classList.remove("active"));
+          div.classList.add("active");
+          updatePanelForLevel();
+          pickRandomNote();
+        });
+
+        levelListEl.appendChild(div);
+      });
+    }
+
+    function initTabs() {
+      qsa(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          qsa(".tab").forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          const id = tab.dataset.tab;
+          if (id === "learn") {
+            modeStatusEl.textContent = "Mode: Learn";
+            currentMode = "note-to-key";
+            examMode = null;
+            examSummaryEl.textContent = "No exam active. Practice freely.";
+          } else if (id === "practice") {
+            modeStatusEl.textContent = "Mode: Practice";
+            currentMode = "note-to-key";
+            examMode = null;
+            examSummaryEl.textContent = "Practice mode focuses on streaks and accuracy.";
+          } else {
+            modeStatusEl.textContent = "Mode: Exam";
+          }
+        });
+      });
+    }
+
+    function initModeButtons() {
+      qsa(".mode-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          qsa(".mode-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentMode = btn.dataset.mode;
+          if (currentMode === "note-to-key") {
+            flashcardRowEl.style.display = "flex";
+            promptEl.textContent =
+              examMode === "performance"
+                ? "Performance exam: Play the shown note when it appears."
+                : "Play this note on the keyboard. Use MIDI or the virtual keys.";
+          } else {
+            flashcardRowEl.style.display = "flex";
+            promptEl.textContent =
+              examMode === "theory"
+                ? "Theory exam: Choose the correct letter name for this note."
+                : "Flashcard: Choose the correct letter name for this note.";
+          }
+          pickRandomNote();
+        });
+      });
+    }
+
+    function initKeyboard() {
+      WHITE_NOTES.forEach((note) => {
+        const key = document.createElement("div");
+        key.className = "white-key";
+        key.dataset.note = note;
+        key.innerHTML = `<span>${note.replace(/[0-9]/g, "")}</span>`;
+        key.addEventListener("mousedown", () => handleNoteInput(note, false));
+        key.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          handleNoteInput(note, false);
+        });
+        whiteKeysEl.appendChild(key);
+      });
+    }
+
+    function updatePanelForLevel() {
+      const lvl = LEVELS.find((l) => l.id === currentLevelId);
+      qs("#panel-title").textContent = `Level ${lvl.id} • ${lvl.title}`;
+      qs("#panel-subtitle").textContent = `${lvl.tag} • Focus notes: ${lvl.notes.join(", ")}`;
+    }
+
+    // ------------ NOTE / STAFF RENDERING ---------------
+
+    function pickRandomNote() {
+      const lvl = LEVELS.find((l) => l.id === currentLevelId);
+      const pool = lvl ? lvl.notes : WHITE_NOTES;
+      currentNote = pool[Math.floor(Math.random() * pool.length)];
+
+      positionStaffNote(currentNote);
+      renderFlashcard(currentNote);
+      highlightVirtualKey(null);
+    }
+
+    function positionStaffNote(note) {
+      const y = NOTE_TO_Y[note] ?? 90;
+      staffNoteEl.style.top = y + "px";
+      staffNoteEl.style.left = "40%";
+      staffNoteEl.style.transform = "translate(-50%, -50%) scale(1)";
+    }
+
+    function renderFlashcard(note) {
+      const correctLetter = note.replace(/[0-9]/g, "");
+      const letters = ["A", "B", "C", "D", "E", "F", "G"];
+      const options = new Set([correctLetter]);
+      while (options.size < 4) {
+        options.add(letters[Math.floor(Math.random() * letters.length)]);
+      }
+      const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
+
+      flashcardOptionsEl.innerHTML = "";
+      shuffled.forEach((letter) => {
+        const btn = document.createElement("button");
+        btn.className = "flashcard-btn";
+        btn.textContent = letter;
+        btn.addEventListener("click", () => {
+          handleFlashcardAnswer(letter === correctLetter);
+        });
+        flashcardOptionsEl.appendChild(btn);
+      });
+    }
+
+    function highlightVirtualKey(note) {
+      qsa(".white-key").forEach((key) => {
+        key.classList.toggle("active", !!note && key.dataset.note === note);
+      });
+    }
+
+    // ------------ INPUT HANDLING ---------------
+
+    function noteNameFromMidi(midiNumber) {
+      for (const [name, num] of Object.entries(NOTE_TO_MIDI)) {
+        if (num === midiNumber) return name;
+      }
+      return null;
+    }
+
+    function handleNoteInput(noteName, fromMidi = false) {
+      const isCorrect = noteName === currentNote;
+      totalAttempts++;
+      if (isCorrect) totalCorrect++;
+
+      if (isCorrect) {
+        streak++;
+        highlightVirtualKey(noteName);
+        staffNoteEl.style.transform = "translate(-50%, -50%) scale(1.15)";
+        setTimeout(() => {
+          staffNoteEl.style.transform = "translate(-50%, -50%) scale(1)";
+        }, 150);
+        if (examMode === "performance") {
+          examQuestions++;
+          examScore++;
+        }
+      } else {
+        streak = 0;
+        if (examMode === "performance") {
+          examQuestions++;
+        }
+      }
+
+      updateStats();
+
+      if (isCorrect) {
+        setTimeout(pickRandomNote, 400);
+      }
+    }
+
+    function handleFlashcardAnswer(isCorrect) {
+      totalAttempts++;
+      if (isCorrect) {
+        totalCorrect++;
+        streak++;
+      } else {
+        streak = 0;
+      }
+
+      if (examMode === "theory") {
+        examQuestions++;
+        if (isCorrect) examScore++;
+      }
+
+      updateStats();
+
+      qsa(".flashcard-btn").forEach((btn) => {
+        btn.classList.remove("correct", "wrong");
+      });
+      const buttons = qsa(".flashcard-btn");
+      buttons.forEach((btn) => {
+        if (isCorrect && btn.textContent === currentNote.replace(/[0-9]/g, "")) {
+          btn.classList.add("correct");
+        }
+      });
+      if (!isCorrect) {
+        const correct = currentNote.replace(/[0-9]/g, "");
+        buttons.forEach((btn) => {
+          if (btn.textContent === correct) btn.classList.add("correct");
+        });
+      }
+
+      setTimeout(() => {
+        pickRandomNote();
+      }, 400);
+    }
+
+    function updateStats() {
+      streakEl.textContent = streak;
+      const acc = totalAttempts === 0 ? 100 : Math.round((totalCorrect / totalAttempts) * 100);
+      accuracyEl.textContent = acc + "%";
+      totalHoursEl.textContent = `${Math.min(TOTAL_HOURS, Math.round(totalAttempts / 50))} / ${TOTAL_HOURS} hours`;
+
+      if (examMode) {
+        const pct = examQuestions === 0 ? 0 : Math.round((examScore / examQuestions) * 100);
+        let band = "Pass";
+        if (pct >= 90) band = "Distinction";
+        else if (pct >= 80) band = "Merit";
+        else if (pct < 60) band = "Below pass";
+        examSummaryEl.innerHTML = `
+          Exam mode: <span class="score">${examMode.toUpperCase()}</span> •
+          Score: <span class="score">${pct}%</span> (${examScore}/${examQuestions}) •
+          Band: <span class="score">${band}</span>
+        `;
+      }
+    }
+
+    // ------------ MIDI ---------------
+
+    function initMIDI() {
+      if (!navigator.requestMIDIAccess) {
+        midiStatusEl.textContent = "MIDI: not supported";
+        midiStatusEl.classList.add("warn");
+        return;
+      }
+      navigator.requestMIDIAccess().then(
+        (access) => {
+          midiAccess = access;
+          midiEnabled = true;
+          midiStatusEl.textContent = "MIDI: connected (waiting for notes)";
+          midiStatusEl.classList.add("ok");
+          for (const input of midiAccess.inputs.values()) {
+            input.onmidimessage = onMIDIMessage;
+          }
+        },
+        () => {
+          midiStatusEl.textContent = "MIDI: permission denied";
+          midiStatusEl.classList.add("warn");
+        }
+      );
+    }
+
+    function onMIDIMessage(message) {
+      const [status, data1, data2] = message.data;
+      const command = status & 0xf0;
+      if (command === 0x90 && data2 > 0) {
+        const noteName = noteNameFromMidi(data1);
+        if (noteName) {
+          handleNoteInput(noteName, true);
+        }
+      }
+    }
+
+    // ------------ EXAM ---------------
+
+    function startExam(mode) {
+      examMode = mode; // "theory" or "performance"
+      examScore = 0;
+      examQuestions = 0;
+      streak = 0;
+      totalAttempts = 0;
+      totalCorrect = 0;
+      updateStats();
+
+      if (mode === "theory") {
+        currentMode = "flashcard";
+        qsa(".mode-btn").forEach((b) => {
+          b.classList.toggle("active", b.dataset.mode === "flashcard");
+        });
+        flashcardRowEl.style.display = "flex";
+        promptEl.textContent = "Theory exam: Choose the correct letter name for this note.";
+      } else {
+        currentMode = "note-to-key";
+        qsa(".mode-btn").forEach((b) => {
+          b.classList.toggle("active", b.dataset.mode === "note-to-key");
+        });
+        flashcardRowEl.style.display = "flex";
+        promptEl.textContent = "Performance exam: Play the shown note when it appears.";
+      }
+      examSummaryEl.textContent = `Exam started: ${mode.toUpperCase()}. Answer 20+ prompts to get a reliable score.`;
+      qs(".tab[data-tab='exam']").click();
+      pickRandomNote();
+    }
+
+    function endExam() {
+      if (!examMode) {
+        examSummaryEl.textContent = "No exam active.";
+        return;
+      }
+      const pct = examQuestions === 0 ? 0 : Math.round((examScore / examQuestions) * 100);
+      let band = "Pass";
+      if (pct >= 90) band = "Distinction";
+      else if (pct >= 80) band = "Merit";
+      else if (pct < 60) band = "Below pass";
+
+      examSummaryEl.innerHTML = `
+        Exam finished: <span class="score">${examMode.toUpperCase()}</span> •
+        Final score: <span class="score">${pct}%</span> (${examScore}/${examQuestions}) •
+        Level: <span class="score">${band}</span>
+      `;
+      examMode = null;
+      modeStatusEl.textContent = "Mode: Learn";
+    }
+
+    // ------------ HOOK UP EXAM BUTTONS ---------------
+
+    function initExamButtons() {
+      qs("#start-theory-exam").addEventListener("click", () => startExam("theory"));
+      qs("#start-performance-exam").addEventListener("click", () => startExam("performance"));
+      qs("#end-exam").addEventListener("click", () => endExam());
+    }
+
+    // ------------ OTHER ---------------
+
+    function initNextButton() {
+      nextNoteBtn.addEventListener("click", () => pickRandomNote());
+    }
+
+    // ------------ BOOTSTRAP ---------------
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initLevels();
+      initTabs();
+      initModeButtons();
+      initKeyboard();
+      initMIDI();
+      initExamButtons();
+      initNextButton();
+      updatePanelForLevel();
+      pickRandomNote();
+    });
+  </script>
+</body>
+</html>
