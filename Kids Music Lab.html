@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kids Music Practice – Beginner Keyboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --accent: #22c55e;
+      --accent-soft: #bbf7d0;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --danger: #f87171;
+      --warn: #facc15;
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      background: rgba(148, 163, 184, 0.25);
+      color: var(--accent-soft);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      color: #022c22;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.98));
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .card h2 {
+      font-size: 0.95rem;
+      margin: 0 0 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card h3 {
+      font-size: 0.85rem;
+      margin: 0 0 4px;
+    }
+
+    .small {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .level-list {
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .level-item {
+      padding: 8px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .level-item:hover {
+      background: rgba(30, 64, 175, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .level-item.active {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.4));
+      border: 1px solid rgba(34, 197, 94, 0.65);
+    }
+
+    .level-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .level-tag {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+    }
+
+    .pill.green {
+      border-color: rgba(34, 197, 94, 0.7);
+      color: var(--accent-soft);
+    }
+
+    .main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .exercise-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .mode-btn {
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      border-right: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .mode-btn:last-child {
+      border-right: none;
+    }
+
+    .mode-btn.active {
+      background: rgba(15, 118, 110, 0.8);
+      color: #a7f3d0;
+    }
+
+    /* STAFF RENDERING */
+    .staff-container {
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 20px 16px;
+      margin-bottom: 8px;
+    }
+
+    .staff {
+      position: relative;
+      height: 160px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    .staff-lines-wrapper {
+      position: relative;
+      height: 100%;
+    }
+
+    .staff-line {
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background: rgba(148, 163, 184, 0.75);
+    }
+
+    .staff-line:nth-child(1) { top: 16px; }  /* Line 5 (top line) = F */
+    .staff-line:nth-child(2) { top: 40px; }  /* Line 4 = D */
+    .staff-line:nth-child(3) { top: 64px; }  /* Line 3 (middle) = B */
+    .staff-line:nth-child(4) { top: 88px; }  /* Line 2 = G */
+    .staff-line:nth-child(5) { top: 112px; } /* Line 1 (bottom) = E */
+
+    .staff-note-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .staff-note {
+      position: absolute;
+      width: 26px;
+      height: 20px;
+      border-radius: 999px;
+      background: #fbbf24;
+      border: 2px solid #92400e;
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #1f2937;
+      transform: translateX(-50%);
+    }
+
+    .staff-note::before {
+      content: "";
+      position: absolute;
+      width: 1.5px;
+      height: 36px;
+      background: #fbbf24;
+      left: 50%;
+      top: -38px;
+      transform: translateX(-50%);
+    }
+
+    .staff-note::after {
+      content: attr(data-name);
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: #fbbf24;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .prompt {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .learning-box {
+      background: rgba(34, 197, 94, 0.08);
+      border-left: 3px solid var(--accent);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .learning-box strong {
+      color: var(--accent-soft);
+    }
+
+    .flashcard-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .flashcard-btn {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .flashcard-btn:hover {
+      background: rgba(30, 64, 175, 0.3);
+    }
+
+    .flashcard-btn.correct {
+      background: rgba(22, 163, 74, 0.3);
+      color: #bbf7d0;
+      border-color: rgba(22, 163, 74, 0.9);
+    }
+
+    .flashcard-btn.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fecaca;
+      border-color: rgba(239, 68, 68, 0.9);
+    }
+
+    .audio-controls {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 0.7rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .btn-small:hover {
+      background: rgba(30, 64, 175, 0.3);
+    }
+
+    .btn-small.primary {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--accent-soft);
+      border-color: rgba(34, 197, 94, 0.8);
+    }
+
+    .keyboard {
+      display: flex;
+      height: 100px;
+      margin-top: 8px;
+      user-select: none;
+      gap: 4px;
+    }
+
+    .white-keys {
+      display: flex;
+      flex: 1;
+      gap: 3px;
+      background: transparent;
+      padding: 0;
+    }
+
+    .white-key {
+      flex: 1;
+      background: linear-gradient(to bottom, #f9fafb, #d1d5db);
+      border-radius: 0 0 8px 8px;
+      border: 2px solid #9ca3af;
+      position: relative;
+      cursor: pointer;
+      box-shadow: inset 0 -4px 6px rgba(148, 163, 184, 1), 0 4px 8px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 0.7rem;
+      color: #374151;
+      font-weight: 700;
+      transition: all 0.05s;
+      padding-bottom: 6px;
+    }
+
+    .white-key:hover {
+      background: linear-gradient(to bottom, #fff, #e5e7eb);
+    }
+
+    .white-key.active {
+      background: linear-gradient(to bottom, #e5e7eb, #9ca3af);
+      transform: translateY(3px);
+      box-shadow: inset 0 -2px 3px rgba(55, 65, 81, 0.8), 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .status-pill.ok { color: #bbf7d0; border-color: rgba(34, 197, 94, 0.8); }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      color: #022c22;
+      border: none;
+      font-weight: 600;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .score {
+      font-weight: 700;
+      color: var(--accent-soft);
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">
+        🎹 Kids Music Lab
+        <span class="badge">Beginner • 30 hrs</span>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="learn">Learn</button>
+        <button class="tab" data-tab="practice">Practice</button>
+        <button class="tab" data-tab="exam">Exam</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: Curriculum -->
+      <aside class="card">
+        <h2>
+          Path
+          <span class="small" id="total-hours">0 / 30 hrs</span>
+        </h2>
+        <p class="small">Learn → Practice → Exam. Each level teaches step-by-step.</p>
+        <div class="level-list" id="level-list"></div>
+      </aside>
+
+      <!-- RIGHT: Main panel -->
+      <section class="main-panel">
+        <div class="card">
+          <div class="exercise-header">
+            <div style="flex: 1;">
+              <h2 id="panel-title">Level 1 • Staff Basics</h2>
+              <div class="small" id="panel-subtitle">Learn the staff and lines.</div>
+            </div>
+          </div>
+
+          <!-- Teaching section -->
+          <div id="teaching-section" class="learning-box">
+            <strong>📚 Lesson:</strong>
+            <p id="teaching-content" style="margin: 6px 0 0 0;">The staff has 5 lines. Notes sit ON the lines or IN the spaces between.</p>
+          </div>
+
+          <!-- Staff display -->
+          <div class="staff-container">
+            <div class="staff">
+              <div class="staff-lines-wrapper">
+                <div class="staff-line"></div>
+                <div class="staff-line"></div>
+                <div class="staff-line"></div>
+                <div class="staff-line"></div>
+                <div class="staff-line"></div>
+              </div>
+              <div class="staff-note-container" id="staff-note-container">
+                <div class="staff-note" id="staff-note"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="prompt" id="prompt-text">Tap to start learning...</div>
+          <div class="subtitle" id="subtitle-text"></div>
+
+          <!-- Interactive section -->
+          <div id="interactive-section">
+            <!-- Flashcard MCQ -->
+            <div id="flashcard-section">
+              <div class="flashcard-options" id="flashcard-options"></div>
+            </div>
+
+            <!-- Audio playback buttons (for ear training) -->
+            <div id="audio-section" class="audio-controls hidden">
+              <button class="btn-small primary" id="play-note-btn">🔊 Play note</button>
+              <button class="btn-small" id="play-again-btn">Repeat</button>
+            </div>
+
+            <!-- Virtual keyboard -->
+            <div class="keyboard" id="keyboard">
+              <div class="white-keys" id="white-keys"></div>
+            </div>
+          </div>
+
+          <div class="status-bar">
+            <div class="row">
+              <span class="status-pill ok" id="level-status">Level 1</span>
+              <span id="mode-status">Learn mode</span>
+            </div>
+            <div class="row">
+              <span>Streak: <span id="streak">0</span></span>
+              <span>Accuracy: <span id="accuracy">—</span></span>
+              <button class="btn" id="next-note-btn">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ============ CURRICULUM & NOTES ============
+
+    const LEVELS = [
+      {
+        id: 1,
+        title: "Staff Basics",
+        type: "teach",
+        description: "Learn the 5 lines and 4 spaces",
+        teaching: "The staff has <strong>5 lines</strong> and <strong>4 spaces</strong> between them. Notes sit on lines or in spaces. Higher = higher pitch.",
+        notes: [],
+        hours: 2,
+      },
+      {
+        id: 2,
+        title: "Lines: E, G, B, D, F",
+        type: "flashcard",
+        description: "Remember line notes",
+        teaching: "Lines are: E, G, B, D, F (bottom to top). <strong>Every Good Boy Does Fine!</strong> 🎵",
+        notes: ["E4", "G4", "B4", "D4", "F4"],
+        hours: 2,
+      },
+      {
+        id: 3,
+        title: "Spaces: F, A, C, E",
+        type: "flashcard",
+        description: "Remember space notes",
+        teaching: "Spaces spell <strong>FACE</strong> (F, A, C, E). Easy to remember! 😊",
+        notes: ["F4", "A4", "C4", "E4"],
+        hours: 2,
+      },
+      {
+        id: 4,
+        title: "All Notes C–E",
+        type: "play-to-key",
+        description: "Find notes on the keyboard",
+        teaching: "Now find these notes on the <strong>keyboard</strong> below. Match the staff note to the key.",
+        notes: ["C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 5,
+        title: "Extended Range A–G",
+        type: "play-to-key",
+        description: "Play more notes",
+        teaching: "Expand your range! Now playing A, B, C, D, E, F, G in one octave.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 6,
+        title: "Ear Training 1",
+        type: "ear-training",
+        description: "Identify notes by sound",
+        teaching: "Listen to a note, then <strong>choose</strong> which one it is. Train your ears! 👂",
+        notes: ["C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 7,
+        title: "Flashcard Speed",
+        type: "flashcard",
+        description: "Speed drill",
+        teaching: "Get faster! Identify notes quickly. Aim for 100% accuracy.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 8,
+        title: "Play Speed Run",
+        type: "play-to-key",
+        description: "Fast keyboard play",
+        teaching: "Play fast! The app shows staff notes and you find them on the keyboard quickly.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 9,
+        title: "Ear Training 2",
+        type: "ear-training",
+        description: "Advanced ear training",
+        teaching: "Harder ear training. Listen carefully and identify notes across the full range.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 10,
+        title: "Rhythm Intro",
+        type: "teach",
+        description: "Quarter notes & half notes",
+        teaching: "Now learn <strong>rhythm</strong>! Quarter note (1 beat), Half note (2 beats), Whole note (4 beats).",
+        notes: ["C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 11,
+        title: "Play Melodies",
+        type: "play-to-key",
+        description: "Simple songs",
+        teaching: "Play simple melodies! The staff shows a short tune. Match notes left to right.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 12,
+        title: "Flashcard Master",
+        type: "flashcard",
+        description: "Perfect accuracy",
+        teaching: "Master flashcards! Get all notes correct quickly and confidently.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 13,
+        title: "Full Ear Training",
+        type: "ear-training",
+        description: "Complete ear mastery",
+        teaching: "Advanced ear training on all notes. Listen and choose correctly.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 14,
+        title: "Mock Exam 1",
+        type: "exam",
+        description: "Theory + Performance",
+        teaching: "This is a mock exam! Test yourself on flashcards AND keyboard play.",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+      {
+        id: 15,
+        title: "Final Review",
+        type: "exam",
+        description: "Complete mastery",
+        teaching: "Final practice before certification. All modes combined!",
+        notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4"],
+        hours: 2,
+      },
+    ];
+
+    const TOTAL_HOURS = LEVELS.reduce((sum, l) => sum + l.hours, 0);
+
+    // MIDI and note mapping
+    const NOTE_TO_MIDI = {
+      "C4": 60, "D4": 62, "E4": 64, "F4": 65, "G4": 67, "A4": 69, "B4": 71,
+      "C5": 72, "A3": 57, "B3": 59
+    };
+
+    const WHITE_NOTES = ["A3", "B3", "C4", "D4", "E4", "F4", "G4"];
+
+    // TREBLE CLEF STAFF POSITIONS (correct spacing)
+    // Staff height: 160px total
+    // 5 lines spaced 24px apart, centered in staff
+    // Line 1 (bottom) = E = Y: 112
+    // Space 1 = F = Y: 100
+    // Line 2 = G = Y: 88
+    // Space 2 = A = Y: 76
+    // Line 3 (middle) = B = Y: 64
+    // Space 3 = C = Y: 52
+    // Line 4 = D = Y: 40
+    // Space 4 = E = Y: 28
+    // Line 5 (top) = F = Y: 16
+    // Below staff = G below = Y: 128
+    // Above staff = A above = Y: 4
+    
+    const NOTE_TO_Y = {
+      "A3": 128,   // Below staff (below line 1)
+      "B3": 112,   // Line 1 (bottom line) = E line
+      "C4": 100,   // Space between line 1 and 2 = F space
+      "D4": 88,    // Line 2 = G line
+      "E4": 76,    // Space between line 2 and 3 = A space
+      "F4": 64,    // Line 3 (middle line) = B line
+      "G4": 52,    // Space between line 3 and 4 = C space
+    };
+
+    const NOTE_TO_NAME = {
+      "A3": "A", "B3": "B", "C4": "C", "D4": "D", "E4": "E", "F4": "F", "G4": "G"
+    };
+
+    const NOTE_FREQUENCIES = {
+      "A3": 220, "B3": 246.94, "C4": 261.63, "D4": 293.66, "E4": 329.63, "F4": 349.23, "G4": 392
+    };
+
+    // ============ STATE ============
+
+    let currentLevelId = 1;
+    let currentNote = "C4";
+    let streak = 0;
+    let totalAttempts = 0;
+    let totalCorrect = 0;
+    let lastCorrect = null;
+
+    let audioContext = null;
+    let midiAccess = null;
+
+    // ============ DOM HELPERS ============
+
+    const qs = (sel) => document.querySelector(sel);
+    const qsa = (sel) => Array.from(document.querySelectorAll(sel));
+
+    const levelListEl = qs("#level-list");
+    const totalHoursEl = qs("#total-hours");
+    const staffNoteEl = qs("#staff-note");
+    const promptEl = qs("#prompt-text");
+    const subtitleEl = qs("#subtitle-text");
+    const teachingEl = qs("#teaching-section");
+    const teachingContentEl = qs("#teaching-content");
+    const flashcardSectionEl = qs("#flashcard-section");
+    const flashcardOptionsEl = qs("#flashcard-options");
+    const audioSectionEl = qs("#audio-section");
+    const whiteKeysEl = qs("#white-keys");
+    const streakEl = qs("#streak");
+    const accuracyEl = qs("#accuracy");
+    const levelStatusEl = qs("#level-status");
+    const nextNoteBtnEl = qs("#next-note-btn");
+    const playNoteBtnEl = qs("#play-note-btn");
+    const playAgainBtnEl = qs("#play-again-btn");
+
+    // ============ AUDIO INIT ============
+
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playNoteSound(noteName) {
+      if (!audioContext) initAudio();
+
+      const freq = NOTE_FREQUENCIES[noteName];
+      if (!freq) return;
+
+      try {
+        const now = audioContext.currentTime;
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.frequency.value = freq;
+        osc.type = "sine";
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 1);
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.start(now);
+        osc.stop(now + 1);
+      } catch (e) {
+        console.log("Audio play failed:", e);
+      }
+    }
+
+    // ============ LEVEL INIT ============
+
+    function initLevels() {
+      LEVELS.forEach((lvl) => {
+        const div = document.createElement("div");
+        div.className = "level-item" + (lvl.id === currentLevelId ? " active" : "");
+        div.dataset.levelId = lvl.id;
+
+        div.innerHTML = `
+          <div>
+            <div class="level-title">Level ${lvl.id} • ${lvl.title}</div>
+            <div class="level-tag">${lvl.description} • ${lvl.hours}h</div>
+          </div>
+          <span class="pill ${lvl.id === 1 ? "green" : ""}">
+            ${lvl.id === 1 ? "Active" : "Locked"}
+          </span>
+        `;
+
+        div.addEventListener("click", () => {
+          currentLevelId = lvl.id;
+          qsa(".level-item").forEach((item) => item.classList.remove("active"));
+          div.classList.add("active");
+          loadLevel();
+        });
+
+        levelListEl.appendChild(div);
+      });
+    }
+
+    function loadLevel() {
+      const lvl = LEVELS.find((l) => l.id === currentLevelId);
+      if (!lvl) return;
+
+      qs("#panel-title").textContent = `Level ${lvl.id} • ${lvl.title}`;
+      qs("#panel-subtitle").textContent = lvl.description;
+      levelStatusEl.textContent = `Level ${lvl.id}`;
+
+      teachingContentEl.innerHTML = lvl.teaching;
+
+      // Show/hide sections
+      if (lvl.type === "teach") {
+        promptEl.textContent = "📚 Read the lesson above, then click Next.";
+        flashcardSectionEl.innerHTML = "";
+        audioSectionEl.classList.add("hidden");
+        whiteKeysEl.parentElement.parentElement.classList.add("hidden");
+        flashcardSectionEl.parentElement.classList.add("hidden");
+      } else if (lvl.type === "flashcard") {
+        promptEl.textContent = "Choose the letter name for this note:";
+        audioSectionEl.classList.add("hidden");
+        whiteKeysEl.parentElement.parentElement.classList.add("hidden");
+        flashcardSectionEl.parentElement.classList.remove("hidden");
+        pickRandomNote();
+      } else if (lvl.type === "play-to-key") {
+        promptEl.textContent = "Play this note on the keyboard:";
+        flashcardSectionEl.parentElement.classList.add("hidden");
+        audioSectionEl.classList.add("hidden");
+        whiteKeysEl.parentElement.parentElement.classList.remove("hidden");
+        pickRandomNote();
+      } else if (lvl.type === "ear-training") {
+        promptEl.textContent = "Listen to the note, then choose it:";
+        flashcardSectionEl.parentElement.classList.remove("hidden");
+        audioSectionEl.classList.remove("hidden");
+        whiteKeysEl.parentElement.parentElement.classList.add("hidden");
+        pickRandomNote();
+        setTimeout(() => playNoteSound(currentNote), 500);
+      } else if (lvl.type === "exam") {
+        promptEl.textContent = "Exam mode: You will answer 20+ questions on all modes.";
+        flashcardSectionEl.parentElement.classList.remove("hidden");
+        audioSectionEl.classList.remove("hidden");
+        whiteKeysEl.parentElement.parentElement.classList.remove("hidden");
+        pickRandomNote();
+      }
+
+      streak = 0;
+      totalAttempts = 0;
+      totalCorrect = 0;
+      updateStats();
+    }
+
+    // ============ NOTE & STAFF RENDERING ============
+
+    function pickRandomNote() {
+      const lvl = LEVELS.find((l) => l.id === currentLevelId);
+      const pool = lvl && lvl.notes.length > 0 ? lvl.notes : WHITE_NOTES;
+      currentNote = pool[Math.floor(Math.random() * pool.length)];
+
+      positionStaffNote(currentNote);
+      renderFlashcard(currentNote);
+      highlightVirtualKey(null);
+    }
+
+    function positionStaffNote(note) {
+      const y = NOTE_TO_Y[note];
+      const name = NOTE_TO_NAME[note];
+
+      if (y === undefined) {
+        console.warn("Note not found:", note);
+        return;
+      }
+
+      staffNoteEl.style.top = y + "px";
+      staffNoteEl.style.left = "45%";
+      staffNoteEl.textContent = name;
+      staffNoteEl.dataset.name = name;
+    }
+
+    function renderFlashcard(note) {
+      const correctLetter = NOTE_TO_NAME[note];
+      const letters = ["A", "B", "C", "D", "E", "F", "G"];
+      const options = new Set([correctLetter]);
+
+      while (options.size < 4) {
+        options.add(letters[Math.floor(Math.random() * letters.length)]);
+      }
+
+      const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
+
+      flashcardOptionsEl.innerHTML = "";
+      shuffled.forEach((letter) => {
+        const btn = document.createElement("button");
+        btn.className = "flashcard-btn";
+        btn.textContent = letter;
+        btn.addEventListener("click", () => {
+          handleFlashcardAnswer(letter === correctLetter);
+        });
+        flashcardOptionsEl.appendChild(btn);
+      });
+    }
+
+    function highlightVirtualKey(note) {
+      qsa(".white-key").forEach((key) => {
+        key.classList.toggle("active", !!note && key.dataset.note === note);
+      });
+    }
+
+    // ============ INPUT HANDLING ============
+
+    function noteNameFromMidi(midiNumber) {
+      for (const [name, num] of Object.entries(NOTE_TO_MIDI)) {
+        if (num === midiNumber) return name;
+      }
+      return null;
+    }
+
+    function handleNoteInput(noteName) {
+      const isCorrect = noteName === currentNote;
+      totalAttempts++;
+      if (isCorrect) {
+        totalCorrect++;
+        streak++;
+        lastCorrect = noteName;
+        highlightVirtualKey(noteName);
+      } else {
+        streak = 0;
+      }
+
+      updateStats();
+
+      if (isCorrect) {
+        setTimeout(pickRandomNote, 500);
+      }
+    }
+
+    function handleFlashcardAnswer(isCorrect) {
+      totalAttempts++;
+      if (isCorrect) {
+        totalCorrect++;
+        streak++;
+      } else {
+        streak = 0;
+      }
+
+      updateStats();
+
+      qsa(".flashcard-btn").forEach((btn) => {
+        btn.classList.remove("correct", "wrong");
+        if (btn.textContent === NOTE_TO_NAME[currentNote]) {
+          btn.classList.add(isCorrect ? "correct" : "correct");
+        }
+      });
+
+      setTimeout(pickRandomNote, 600);
+    }
+
+    function updateStats() {
+      streakEl.textContent = streak;
+      if (totalAttempts === 0) {
+        accuracyEl.textContent = "—";
+      } else {
+        const acc = Math.round((totalCorrect / totalAttempts) * 100);
+        accuracyEl.textContent = acc + "%";
+      }
+      const estimatedHours = Math.min(TOTAL_HOURS, Math.round(totalAttempts / 50));
+      totalHoursEl.textContent = `${estimatedHours} / ${TOTAL_HOURS} hrs`;
+    }
+
+    // ============ KEYBOARD ============
+
+    function initKeyboard() {
+      WHITE_NOTES.forEach((note) => {
+        const key = document.createElement("div");
+        key.className = "white-key";
+        key.dataset.note = note;
+        key.textContent = NOTE_TO_NAME[note];
+        key.addEventListener("mousedown", () => handleNoteInput(note));
+        key.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          handleNoteInput(note);
+        });
+        whiteKeysEl.appendChild(key);
+      });
+    }
+
+    // ============ TABS ============
+
+    function initTabs() {
+      qsa(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          qsa(".tab").forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+        });
+      });
+    }
+
+    // ============ BUTTONS ============
+
+    function initButtons() {
+      nextNoteBtnEl.addEventListener("click", () => {
+        const lvl = LEVELS.find((l) => l.id === currentLevelId);
+        if (lvl && lvl.type === "teach") {
+          // Auto-advance to next level
+          if (currentLevelId < 15) {
+            currentLevelId++;
+            qsa(".level-item").forEach((item) => {
+              item.classList.toggle("active", item.dataset.levelId == currentLevelId);
+            });
+            loadLevel();
+          }
+        } else {
+          pickRandomNote();
+        }
+      });
+
+      playNoteBtnEl.addEventListener("click", () => {
+        playNoteSound(currentNote);
+      });
+
+      playAgainBtnEl.addEventListener("click", () => {
+        playNoteSound(currentNote);
+      });
+    }
+
+    // ============ MIDI ============
+
+    function initMIDI() {
+      if (!navigator.requestMIDIAccess) return;
+      navigator.requestMIDIAccess().then(
+        (access) => {
+          midiAccess = access;
+          for (const input of midiAccess.inputs.values()) {
+            input.onmidimessage = (msg) => {
+              const [status, data1] = msg.data;
+              if ((status & 0xf0) === 0x90) {
+                const noteName = noteNameFromMidi(data1);
+                if (noteName) handleNoteInput(noteName);
+              }
+            };
+          }
+        },
+        () => {}
+      );
+    }
+
+    // ============ BOOTSTRAP ============
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initLevels();
+      initTabs();
+      initKeyboard();
+      initButtons();
+      initAudio();
+      initMIDI();
+      loadLevel();
+    });
+  </script>
+</body>
+</html>
